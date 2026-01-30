@@ -78,7 +78,7 @@ void InitializeWindow() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    window = SDL_CreateWindow("Texture Display", width, height, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("Texture Display", width * 2, height, SDL_WINDOW_OPENGL);
     glContext = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, glContext);
 
@@ -89,7 +89,7 @@ void InitializeWindow() {
 
     int drawableW, drawableH;
     SDL_GetWindowSize(window, &drawableW, &drawableH);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, width * 2, height);
 }
 
 void LoadTexture(unsigned char* data, GLuint* texture) {
@@ -146,8 +146,15 @@ void Render() {
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, outputTexture);
+    glUniform1i(glGetUniformLocation(shaderProgram, "uHasColor"), 0);
     glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "xOffset"), 0.5f);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+    glBindTexture(GL_TEXTURE_2D, normalTexture);
+    glUniform1i(glGetUniformLocation(shaderProgram, "uHasColor"), 1);
+    glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "xOffset"), -0.5f);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     SDL_GL_SwapWindow(window);
